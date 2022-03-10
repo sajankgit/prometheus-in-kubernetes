@@ -77,6 +77,8 @@ https://github.com/sajankgit/prometheus-in-kubernetes/tree/main/Manifests
 
 For scalability, we should be using NFS persistent disk instead of normal PD. NFS persistent disk will allow mounting disk with multiple pods. However, for the documentation purpose I am using normal PD.
 
+Also, you can install prometheus exporter — https://github.com/prometheus-operator/prometheus-operator which will have all the components including alert manager and grafana. This documentation intents to deploy just the prometheus application in K8.
+
 ## Deploying Prometheus in k8
 
 1. Building Docker Image.
