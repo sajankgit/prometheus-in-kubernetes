@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{name}}
+  name: {{name}}
+  namespace: {{namespace}}
+spec:
+  strategy:
+    type: Recreate
+  replicas: {{replicas}}
+  selector:
+    matchLabels:
+      app: {{name}}
+  template:
+    metadata:
+      labels:
+        app: {{name}}
+        name: {{name}}
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: {{name}}
+        image: {{image}}
+        imagePullPolicy: Always
+        args:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus'
+          - '--web.console.templates=/prometheus/consoles'
+          - '--web.console.libraries=prometheus/console_libraries'
+          - '--storage.tsdb.retention=120d'
+          - '--web.enable-lifecycle'
+          - '--web.enable-admin-api'
+          - '--storage.tsdb.max-block-duration=2h'
+          - '--storage.tsdb.min-block-duration=2h'
+                  
+        ports:
+        - containerPort: 9090
+          name: default
+          protocol: TCP
+
+        volumeMounts:
+          - name: prometheus-storage-disk
+            mountPath: /prometheus
+
+      
+      imagePullSecrets:
+       - name: {{secret}}
+      restartPolicy: Always
+
+      volumes:
+        - name: prometheus-storage-disk
+          persistentVolumeClaim:
+            claimName: {{StorageClassName}}
